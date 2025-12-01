@@ -22,7 +22,7 @@ public partial class Problem1
     }
 
     [Fact]
-    public void SolvePart1()
+    public void Solve()
     {
         var safe = new Safe();
 
@@ -32,6 +32,6 @@ public partial class Problem1
         }
 
         Assert.Equal(1021, safe.ZeroCount);
-        Console.WriteLine(safe.Dial.ZeroCount);
+        Assert.Equal(5933, safe.Dial.ZeroCount);
     }
 }
