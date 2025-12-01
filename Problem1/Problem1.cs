@@ -1,0 +1,37 @@
+namespace AdventOfCode2025.Problem1;
+
+public partial class Problem1
+{
+    private enum Direction
+    {
+        Left,
+        Right,
+    }
+
+    [Fact]
+    public void Example1()
+    {
+        var safe = new Safe();
+        foreach (var line in Content.EXAMPLE_DATA.EnumerateLines())
+        {
+            safe.Move(line.ToString());
+        }
+
+        Assert.Equal(3, safe.ZeroCount);
+        Assert.Equal(6, safe.Dial.ZeroCount);
+    }
+
+    [Fact]
+    public void SolvePart1()
+    {
+        var safe = new Safe();
+
+        foreach (var line in Content.FILE_DATA.EnumerateLines())
+        {
+            safe.Move(line.ToString());
+        }
+
+        Assert.Equal(1021, safe.ZeroCount);
+        Console.WriteLine(safe.Dial.ZeroCount);
+    }
+}
