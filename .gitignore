@@ -1,0 +1,32 @@
+# Visual Studio Code files
+.vscode/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+
+# NuGet packages
+*.nupkg
+.nuget/
+packages/
+
+# Project files
+*.csproj.user
+*.resharper
+*.resharper.user
+*.suo
+*.sln.docstates
+
+# Test results
+TestResults/
+
+# Misc
+*.user
+*.log
+*.bak
+*.vs/
