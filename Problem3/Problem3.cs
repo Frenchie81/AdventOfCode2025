@@ -24,9 +24,11 @@ public class Problem3
     {
         var batteries = ParseContent(Content.EXAMPLE);
 
-        var sum = batteries.Select(b => b.GetJoltage()).Sum();
+        var sum = batteries.Select(b => b.GetJoltage2(2)).Sum();
+        var sum2 = batteries.Select(b => b.GetJoltage2(12)).Sum();
 
         Assert.Equal(357, sum);
+        Assert.Equal(3121910778619, sum2);
     }
 
     [Fact]
@@ -34,8 +36,10 @@ public class Problem3
     {
         var batteries = ParseContent(Content.FILE);
 
-        var sum = batteries.Select(b => b.GetJoltage()).Sum();
+        var sum = batteries.Select(b => b.GetJoltage2(2)).Sum();
+        var sum2 = batteries.Select(b => b.GetJoltage2(12)).Sum();
 
         Assert.Equal(17085, sum);
+        Assert.Equal(169408143086082, sum2);
     }
 }
