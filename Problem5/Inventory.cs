@@ -8,6 +8,7 @@ public class Inventory
     {
         var inventory = new Inventory();
         var parsingRanges = true;
+        var ranges = new List<Range>();
         foreach (var line in content.EnumerateLines())
         {
             if (string.IsNullOrWhiteSpace(line.ToString()))
@@ -21,7 +22,7 @@ public class Inventory
                 var splits = line.ToString().Split('-');
                 var start = long.Parse(splits[0]);
                 var end = long.Parse(splits[1]);
-                inventory.Ranges.Add(new Range(start, end));
+                ranges.Add(new Range(start, end));
             }
             else
             {
@@ -30,6 +31,12 @@ public class Inventory
             }
         }
 
+        foreach (var range in ranges.OrderBy(r => r.Start).ThenBy(r => r.End))
+        {
+            inventory.AddRange(range);
+        }
+
+        Console.WriteLine(inventory);
         return inventory;
     }
 
@@ -39,7 +46,7 @@ public class Inventory
 
     public List<long> Products { get; private set; } = [];
 
-    public long CountFreshIngredients()
+    public long CountFreshProducts()
     {
         long count = 0;
 
@@ -52,6 +59,21 @@ public class Inventory
         }
 
         return count;
+    }
+
+    public long CountFreshIngredients()
+    {
+        return Ranges.Sum(r => r.RangeTotal());
+    }
+
+    public void AddRange(Range range)
+    {
+        if (Ranges.Any(r => r.TryCollapse(range)))
+        {
+            return;
+        }
+
+        Ranges.AddRange(range);
     }
 
     public override string ToString()
