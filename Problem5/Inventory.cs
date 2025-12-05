@@ -36,7 +36,6 @@ public class Inventory
             inventory.AddRange(range);
         }
 
-        Console.WriteLine(inventory);
         return inventory;
     }
 
