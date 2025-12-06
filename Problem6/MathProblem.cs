@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 
 namespace AdventOfCode2025.Problem6;
@@ -11,7 +12,6 @@ public class MathProblem
         foreach (var line in content.EnumerateLines())
         {
             var splits = line.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            //Console.WriteLine(JsonSerializer.Serialize(splits));
             for (var i = 0; i < splits.Length; i++)
             {
                 if (!maths.TryGetValue(i, out MathProblem? math))
@@ -34,6 +34,43 @@ public class MathProblem
         }
 
         return [.. maths.Values];
+    }
+
+    public static List<MathProblem> ParseContent2(string content)
+    {
+        var lines = content.Split("\n");
+        var operations = lines.Last();
+
+        var maths = new List<MathProblem>();
+        MathProblem? currentMath = null;
+        for (int i = 0; i < operations.Length; i++)
+        {
+            var c = operations[i];
+            if (!char.IsWhiteSpace(c))
+            {
+                currentMath = new MathProblem()
+                {
+                    Operation = c == '+' ? Operation.Add : Operation.Multiply,
+                };
+                maths.Add(currentMath);
+            }
+
+            if (currentMath != null)
+            {
+                var sb = new StringBuilder();
+                for (var j = 0; j < lines.Length - 1; j++)
+                {
+                    sb.Append(lines[j][i]);
+                }
+                var number = sb.ToString();
+                if (long.TryParse(number, out var parsed))
+                {
+                    currentMath.Values.Enqueue(parsed);
+                }
+            }
+        }
+
+        return maths;
     }
 
     public Queue<long> Values { get; } = [];

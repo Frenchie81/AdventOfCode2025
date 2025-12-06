@@ -9,6 +9,13 @@ public class Problem6
         return maths.Sum(m => m.Run());
     }
 
+    private static long Solve2(string content)
+    {
+        var maths = MathProblem.ParseContent2(content);
+
+        return maths.Sum(m => m.Run());
+    }
+
     [Fact]
     public void Example()
     {
@@ -18,10 +25,26 @@ public class Problem6
     }
 
     [Fact]
+    public void Example2()
+    {
+        var result = Solve2(Content.EXAMPLE);
+
+        Assert.Equal(3263827, result);
+    }
+
+    [Fact]
     public void File()
     {
         var result = Solve(Content.FILE);
 
         Assert.Equal(4387670995909, result);
+    }
+
+    [Fact]
+    public void File2()
+    {
+        var result = Solve2(Content.FILE);
+
+        Assert.Equal(9625320374409, result);
     }
 }
