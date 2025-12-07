@@ -37,13 +37,15 @@ public class Grid
 
         MaxX = Tiles[0].Count - 1;
         MaxY = Tiles.Count - 1;
-
-        Beams.Add(new Beam(this, startX, startY));
+        StartX = startX;
+        StartY = startY;
     }
 
-    public List<List<Tile>> Tiles { get; private set; }
+    public int StartX { get; private set; }
 
-    public List<Beam> Beams { get; } = [];
+    public int StartY { get; private set; }
+
+    public List<List<Tile>> Tiles { get; private set; }
 
     public int SplitCount { get; set; } = 0;
 
@@ -52,11 +54,6 @@ public class Grid
     public int MaxX { get; private set; }
 
     public int MaxY { get; private set; }
-
-    public void SetTile(int x, int y, Tile tile)
-    {
-        Tiles[y][x] = tile;
-    }
 
     public Tile GetTile(int x, int y)
     {
@@ -68,59 +65,9 @@ public class Grid
         return Tiles[y][x];
     }
 
-    public bool AddBeam(int x, int y, bool ignoreExistingBeam = false)
-    {
-        var tile = GetTile(x, y);
-        if (tile == Tile.Open || (ignoreExistingBeam && tile == Tile.Beam))
-        {
-            Beams.Add(new Beam(this, x, y));
-            return true;
-        }
-        return false;
-    }
-
-    public void Move()
-    {
-        var beams = Beams.Where(b => !b.Finished).ToList();
-
-        foreach (var beam in beams)
-        {
-            beam.Move();
-        }
-    }
-
-    public void Move2()
-    {
-        var beams = Beams.Where(b => !b.Finished).ToList();
-
-        foreach (var beam in beams)
-        {
-            beam.Move2();
-        }
-    }
-
-    public int CountTimelines()
-    {
-        var count = -1;
-        foreach (var row in Tiles)
-        {
-            count += row.Count(t => t == Tile.Beam);
-        }
-        return count;
-    }
-
     public void Run()
     {
-        while (Beams.Any(b => !b.Finished))
-        {
-            Move();
-        }
-    }
-
-    public void Run2()
-    {
-        var start = Beams.First();
-        TimelineCount = Recurse(start.X, start.Y + 1, []);
+        TimelineCount = Recurse(StartX, StartY, []);
     }
 
     public long Recurse(int nextX, int nextY, Dictionary<(int x, int y), long> memo)
@@ -138,6 +85,7 @@ public class Grid
                 count += Recurse(nextX, nextY + 1, memo);
                 break;
             case Tile.Splitter:
+                SplitCount += 1;
                 count += Recurse(nextX - 1, nextY + 1, memo);
                 count += Recurse(nextX + 1, nextY + 1, memo);
                 break;

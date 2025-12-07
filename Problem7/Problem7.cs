@@ -15,7 +15,7 @@ public class Problem7
     {
         var grid = new Grid(content);
 
-        grid.Run2();
+        grid.Run();
 
         return grid.TimelineCount;
     }
@@ -49,7 +49,6 @@ public class Problem7
     {
         var result = Solve2(Content.FILE);
 
-        Console.WriteLine(result);
         Assert.Equal(40941112789504, result);
     }
 }
