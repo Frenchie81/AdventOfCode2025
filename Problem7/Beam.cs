@@ -7,10 +7,6 @@ public class Beam
         Grid = grid;
         X = x;
         Y = y;
-        if (Grid.GetTile(x, y) != Tile.Open)
-        {
-            throw new Exception("invalid tile");
-        }
 
         Grid.SetTile(x, y, Tile.Beam);
     }
@@ -35,6 +31,7 @@ public class Beam
                 break;
             case Tile.Splitter:
                 Grid.SplitCount += 1;
+                Grid.TimelineCount += 2;
                 Grid.AddBeam(X + 1, nextY);
                 Grid.AddBeam(X - 1, nextY);
                 Finished = true;
@@ -55,19 +52,18 @@ public class Beam
         switch (tile)
         {
             case Tile.Open:
+            case Tile.Beam:
                 Y = nextY;
                 Grid.SetTile(X, Y, Tile.Beam);
                 break;
             case Tile.Splitter:
                 Grid.SplitCount += 1;
-                Grid.AddBeam(X + 1, nextY);
-                Grid.AddBeam(X - 1, nextY);
-                Finished = true;
-                break;
-            case Tile.Beam:
+                Grid.AddBeam(X + 1, nextY, true);
+                Grid.AddBeam(X - 1, nextY, true);
                 Finished = true;
                 break;
             case Tile.OutOfBounds:
+                Grid.TimelineCount++;
                 Finished = true;
                 break;
         }

@@ -32,7 +32,7 @@ public class Grid
             }
 
             Tiles.Add(row);
-            x++;
+            y++;
         }
 
         MaxX = Tiles[0].Count - 1;
@@ -47,7 +47,7 @@ public class Grid
 
     public int SplitCount { get; set; } = 0;
 
-    public int TimelineCount { get; set; } = 0;
+    public long TimelineCount { get; set; } = 0;
 
     public int MaxX { get; private set; }
 
@@ -68,9 +68,10 @@ public class Grid
         return Tiles[y][x];
     }
 
-    public bool AddBeam(int x, int y)
+    public bool AddBeam(int x, int y, bool ignoreExistingBeam = false)
     {
-        if (GetTile(x, y) == Tile.Open)
+        var tile = GetTile(x, y);
+        if (tile == Tile.Open || (ignoreExistingBeam && tile == Tile.Beam))
         {
             Beams.Add(new Beam(this, x, y));
             return true;
@@ -88,41 +89,67 @@ public class Grid
         }
     }
 
+    public void Move2()
+    {
+        var beams = Beams.Where(b => !b.Finished).ToList();
+
+        foreach (var beam in beams)
+        {
+            beam.Move2();
+        }
+    }
+
+    public int CountTimelines()
+    {
+        var count = -1;
+        foreach (var row in Tiles)
+        {
+            count += row.Count(t => t == Tile.Beam);
+        }
+        return count;
+    }
+
     public void Run()
     {
-        var moves = 0;
         while (Beams.Any(b => !b.Finished))
         {
             Move();
-            moves += 1;
         }
     }
 
     public void Run2()
     {
         var start = Beams.First();
-        Recurse(start.X, start.Y);
+        TimelineCount = Recurse(start.X, start.Y + 1, []);
     }
 
-    public void Recurse(int nextX, int nextY)
+    public long Recurse(int nextX, int nextY, Dictionary<(int x, int y), long> memo)
     {
+        if (memo.TryGetValue((nextX, nextY), out var memoValue))
+        {
+            return memoValue;
+        }
+
+        long count = 0;
         var tile = GetTile(nextX, nextY);
         switch (tile)
         {
             case Tile.Open:
-            case Tile.Beam:
-                Recurse(nextX, nextY + 1);
+                count += Recurse(nextX, nextY + 1, memo);
                 break;
             case Tile.Splitter:
-                Recurse(nextX - 1, nextY + 1);
-                Recurse(nextX + 1, nextY + 1);
+                count += Recurse(nextX - 1, nextY + 1, memo);
+                count += Recurse(nextX + 1, nextY + 1, memo);
                 break;
             case Tile.OutOfBounds:
-                TimelineCount += 1;
+                count += 1;
                 break;
             default:
                 break;
         }
+
+        memo.Add((nextX, nextY), count);
+        return count;
     }
 
     public override string ToString()

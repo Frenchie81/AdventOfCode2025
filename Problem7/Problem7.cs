@@ -8,11 +8,10 @@ public class Problem7
 
         grid.Run();
 
-        Console.WriteLine(grid.Beams.Count);
         return grid.SplitCount;
     }
 
-    public static int Solve2(string content)
+    public static long Solve2(string content)
     {
         var grid = new Grid(content);
 
@@ -51,6 +50,6 @@ public class Problem7
         var result = Solve2(Content.FILE);
 
         Console.WriteLine(result);
-        //Assert.Equal(1662, result);
+        Assert.Equal(40941112789504, result);
     }
 }
