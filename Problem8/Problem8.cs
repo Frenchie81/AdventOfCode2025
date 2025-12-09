@@ -21,7 +21,10 @@ public class Problem8
         return distances;
     }
 
-    private static int ApplyCircuits2(List<JunctionBox> junctionBoxes, int numberOfIterations)
+    private static (int Result1, long Result2) ApplyCircuits(
+        List<JunctionBox> junctionBoxes,
+        int numberOfIterations
+    )
     {
         var distances = GetDistances(junctionBoxes).OrderBy(d => d.D).ToArray();
         var circuits = new Dictionary<int, List<JunctionBox>>();
@@ -31,6 +34,12 @@ public class Problem8
             circuits.Add(i, [junctionBoxes[i]]);
         }
 
+        JunctionBox? lastA = null;
+        JunctionBox? lastB = null;
+        if (junctionBoxes.Count < numberOfIterations)
+        {
+            numberOfIterations = distances.Length;
+        }
         for (var i = 0; i < numberOfIterations; i++)
         {
             var distance = distances[i];
@@ -49,6 +58,12 @@ public class Problem8
             }
 
             circuitB.Value.Clear();
+
+            if (circuits.Any(c => c.Value.Count == junctionBoxes.Count))
+            {
+                lastA = distance.A;
+                lastB = distance.B;
+            }
         }
 
         var threeLargest = circuits
@@ -56,28 +71,37 @@ public class Problem8
             .Take(3)
             .Aggregate(1, (a, b) => a * b.Value.Count);
 
-        return threeLargest;
+        if (lastA is not null && lastB is not null)
+        {
+            return (threeLargest, lastA.X * lastB.X);
+        }
+
+        return (threeLargest, 0);
     }
 
-    private static long Solve(string content, int iterations)
+    private static (int Result1, long Result2) Solve(string content, int iterations)
     {
         var junctionBoxes = JunctionBox.ParseContent(content);
-        return ApplyCircuits2(junctionBoxes, iterations);
+        return ApplyCircuits(junctionBoxes, iterations);
     }
 
     [Fact]
     public void Example()
     {
-        var result = Solve(Content.EXAMPLE, 10);
+        var (result, _) = Solve(Content.EXAMPLE, 10);
+        var (_, result2) = Solve(Content.EXAMPLE, int.MaxValue);
 
         Assert.Equal(40, result);
+        Assert.Equal(25272, result2);
     }
 
     [Fact]
     public void File()
     {
-        var result = Solve(Content.FILE, 1000);
+        var (result, _) = Solve(Content.FILE, 1000);
+        var (_, result2) = Solve(Content.FILE, int.MaxValue);
 
         Assert.Equal(164475, result);
+        Assert.Equal(169521198, result2);
     }
 }
